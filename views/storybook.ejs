@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= story.Title %></title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Comic Neue', cursive;
+      background-color: white;
+      color: #333;
+      padding-bottom: 50px;
+    }
+
+    h1, h2, h3, h5 {
+      color: #4CAF50;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+    }
+
+    .card {
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: solid 1px black;
+      border-radius: 15px;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-img-top {
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .card-body {
+      background-color: #fff;
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .card-text {
+      font-size: 1.2em;
+    }
+
+    .list-unstyled {
+      padding-left: 0;
+      font-size: 1em;
+    }
+
+    .list-unstyled li {
+      margin-bottom: 5px;
+    }
+
+    .row {
+      justify-content: center;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    .btn-custom {
+      background-color: #4CAF50;
+      color: #fff;
+      border-radius: 20px;
+      padding: 10px 20px;
+      border: none;
+      transition: background-color 0.3s;
+    }
+
+    .btn-custom:hover {
+      background-color: #45a049;
+    }
+
+    .cryptogram-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .cryptogram {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .cryptogram div {
+      margin: 5px;
+      text-align: center;
+    }
+    .cryptogram input {
+      width: 40px;
+      height: 40px;
+      font-size: 1.5em;
+      text-align: center;
+      font-weight: bold;
+      border: 2px solid #333;
+      border-radius: 5px;
+    }
+    .cryptogram span {
+      display: block;
+      margin-top: 5px;
+      font-size: 1em;
+      font-weight: bold;
+      color: #333;
+    }
+    .math-questions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .question {
+      margin: 10px 20px;
+      font-size: 1.2em;
+      color: #333;
+    }
+    .solution {
+      display: none;
+      font-size: 1em;
+      color: #777;
+    }
+    .story-solution {
+      display: none;
+      font-size: 1.2em;
+      color: green;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .button-container {
+      margin-bottom: 20px;
+    }
+    .button-container button {
+      font-size: 1em;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 5px;
+    }
+    .button-container button.active {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container my-5">
+    <h1 class="text-center"><%= story.Title %></h1>
+    <p class="text-center"><%= story.Storyline %></p>
+    <h3>Event</h3>
+    <p><%= story.Event %></p>
+    <h3 class="text-center">Characters</h3><br/>
+    <div class="row">
+      <% story.Characters.forEach(character => { %>
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            <img src="/sample.jpg" class="card-img-top" alt="Character Image">
+            <div class="card-body">
+              <h5 class="card-title text-center"><%= character.Name %></h5>
+              <label class="card-text"><strong>Gender:</strong> <%= character.Gender %></label><br/>
+              <ul class="list-unstyled">
+                <% for (let trait in character.Traits) { %>
+                  <li><strong><%= trait %>:</strong> <%= character.Traits[trait] %></li>
+                <% } %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    <h3 class="text-center">Clues:</h3>
+    <% story.Clues.forEach((clue, index) => { %>
+      <div>
+        <!-- <strong>Description:</strong> -->
+        <h2 id="clue-<%= index %>" class="text-center"><%= clue.Description %></h2>
+        <div class="cryptogram-container">
+          <div class="cryptogram" id="cryptogram-<%= index %>">
+            <!-- Cryptogram fields will be generated here -->
+          </div>
+          <div class="math-questions" id="math-questions-<%= index %>">
+            <!-- Math questions will be generated here -->
+          </div>
+        </div>
+        <!-- <strong>Points To Characters:</strong> <%= clue.PointsToCharacters.join(', ') %> -->
+      </div> <br/><hr/>
+    <% }); %>
+    <h3>Solution</h3>
+    <p><%= story.Solution %></p>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    const cryptograms = [
+      {
+        message: "SIR REGINALD WAS FOUND DEAD IN HIS STUDY THE SECRET LIES IN THE LIBRARY",
+        story: "Sir Reginald was found dead in his study. The secret lies in the library."
+      },
+      {
+        message: "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+        story: "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
+      },
+      {
+        message: "MYSTERIOUS LIGHTS WERE SEEN IN THE NIGHT SKY",
+        story: "Mysterious lights were seen in the night sky."
+      }
+    ];
+
+    let currentKey = {};
+    let inputsState = {};
+    let solutionVisible = false;
+
+    function generateRandomKey() {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+      const numbers = Array.from({ length: 26 }, (_, i) => i + 1);
+      for (let i = numbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+      }
+      const key = {};
+      letters.forEach((letter, index) => {
+        key[letter] = numbers[index];
+      });
+      return key;
+    }
+
+    function encryptMessage(message, key) {
+      return message.split('').map(char => (char !== ' ' ? key[char] : ' '));
+    }
+
+    function generateCryptogram(encryptedMessage, index) {
+      const cryptogramDiv = document.getElementById('cryptogram-' + index);
+      cryptogramDiv.innerHTML = '';
+      encryptedMessage.forEach((num, i) => {
+        const div = document.createElement('div');
+        if (num !== ' ') {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.maxLength = 1;
+          input.dataset.index = i;
+          input.dataset.correctLetter = cryptograms[index].message[i];
+          input.addEventListener('input', checkAnswer);
+          const span = document.createElement('span');
+          span.textContent = num;
+          div.appendChild(input);
+          div.appendChild(span);
+          if (inputsState[index] && inputsState[index][i]) {
+            input.value = inputsState[index][i];
+            checkAnswer({ target: input });
+          }
+        } else {
+          div.innerHTML = '&nbsp;&nbsp;&nbsp;';
+        }
+        cryptogramDiv.appendChild(div);
+      });
+    }
+
+    function generateMathQuestions(uniqueNumbers, index) {
+      const mathQuestionsDiv = document.getElementById('math-questions-' + index);
+      mathQuestionsDiv.innerHTML = '';
+      uniqueNumbers.forEach(num => {
+        const equation = generateEquation(num);
+        const p = document.createElement('p');
+        p.className = 'question';
+        p.innerText = `${equation} = ${String.fromCharCode(Object.keys(currentKey).find(keyLetter => currentKey[keyLetter] === num).charCodeAt(0))}`;
+        const solution = document.createElement('span');
+        solution.className = 'solution';
+        solution.innerText = String.fromCharCode(Object.keys(currentKey).find(keyLetter => currentKey[keyLetter] === num).charCodeAt(0));
+        p.appendChild(solution);
+        mathQuestionsDiv.appendChild(p);
+      });
+    }
+
+    function generateEquation(num) {
+      const operations = ['+', '-', '*', '/'];
+      let equation = '';
+      const complexity = Math.floor(Math.random() * 4);
+
+      switch (complexity) {
+        case 0:
+          equation = `${num - 1} + 1`;
+          break;
+        case 1:
+          equation = `${num + 1} - 1`;
+          break;
+        case 2:
+          if (num % 2 === 0) {
+            equation = `${num / 2} * 2`;
+          } else {
+            equation = `${num} * 1`;
+          }
+          break;
+        case 3:
+          if (num % 2 === 0 && num / 2 > 1) {
+            equation = `${num * 2} / 2`;
+          } else {
+            equation = `${num} / 1`;
+          }
+          break;
+      }
+
+      return equation;
+    }
+
+    function checkAnswer(e) {
+      const input = e.target;
+      const correctLetter = input.dataset.correctLetter;
+      if (input.value.toUpperCase() === correctLetter) {
+        input.style.color = 'green';
+      } else {
+        input.style.color = 'red';
+      }
+      inputsState[input.dataset.index] = input.value;
+    }
+
+    function switchCryptogram(index) {
+      currentKey = generateRandomKey();
+      const encryptedMessage = encryptMessage(cryptograms[index].message, currentKey);
+      generateCryptogram(encryptedMessage, index);
+      generateMathQuestions([...new Set(encryptedMessage.filter(num => num !== ' '))], index);
+      if (solutionVisible) {
+        document.querySelectorAll('.solution').forEach(solution => {
+          solution.style.display = 'inline';
+        });
+      }
+    }
+
+    function toggleSolution() {
+      solutionVisible = !solutionVisible;
+      document.querySelectorAll('.solution').forEach(solution => {
+        solution.style.display = solutionVisible ? 'inline' : 'none';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      <% story.Clues.forEach((clue, index) => { %>
+        switchCryptogram(<%= index %>);
+      <% }); %>
+    });
+  </script>
+</body>
+</html>
