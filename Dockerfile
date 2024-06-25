@@ -1,13 +1,9 @@
 FROM node:latest
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY . .
 
-RUN npm ci --only=production
-
-EXPOSE 8080
-
-USER node
+RUN npm install
 
 CMD ["node", "index.js"]
